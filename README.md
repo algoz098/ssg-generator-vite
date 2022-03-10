@@ -37,9 +37,6 @@ SSR plugin is needed to render the pages as a server to after use it as static f
 SSG plugins uses the SSR plugin to create the static files
 
 ## TODOs
-- Fix the index.html
-  -  static part not genererated correctly
-  -  SEO not generated
 -  dynamic routes
   -  static part not genererated correctly
 - TailwindCSS

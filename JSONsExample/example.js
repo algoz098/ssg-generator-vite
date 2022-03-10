@@ -536,7 +536,7 @@ let response = {
   ],
   routes: [
     {
-      path: '',
+      path: '/',
       layout: 'Blank',
       name: 'index',
       page: 'Index',

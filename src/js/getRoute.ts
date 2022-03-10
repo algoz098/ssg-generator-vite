@@ -1,18 +1,32 @@
 import useItems from '../composables/useItems';
-import { getLayoutComponent, getLayoutName } from './getLayout';
+import { getLayoutComponent } from './getLayout';
 import { getPageComponent, getPageComponents } from './getPage';
 
-export const generateChildren = function (structure: any, route: any): any {
-  const children = []
+/*
+* Receives a route object to create all the routes based on that route
+* Returns a flat collection (array) with the routes
+*/
+export const getRouteGenerated = function (structure: any, route: any) {
+  const result: any = []
+
+  const routeCreated: any = {
+    path: route.path,
+    name: route.name,
+    props: {
+      components: getPageComponents(structure.value, route.page)
+    },
+    component: getLayoutComponent(structure.value, route.layout),
+  }
 
   if (route.parameters?.length) {
     for (let index = 0; index < route.parameters.length; index++) {
       let routeName = route.name
-      let routePath = ''
+      let routePath = `${route.path}`
 
       const param = route.parameters[index];
       if (param.type === 'mutable') {
-        routePath += `:${param.name}`
+        routePath += `/:${param.name}`
+        routeName += `_${param.name}`
       } else if (param.type === 'generate') {
         const { getItems } = useItems()
         const {
@@ -23,7 +37,7 @@ export const generateChildren = function (structure: any, route: any): any {
         for (let index = 0; index < items.length; index++) {
           const item = items[index];
           let route1 = {
-            path: `${routePath}${item[targetKey]}`,
+            path: `${routePath}/${item[targetKey]}`,
             name: `${routePath}_${item[targetKey]}`,
             meta: {
               [name]: item[targetKey]
@@ -34,7 +48,7 @@ export const generateChildren = function (structure: any, route: any): any {
             component: getPageComponent(structure.value, route.page)
           }
 
-          children.push(route1)
+          result.push(route1)
         }
 
         continue
@@ -42,7 +56,8 @@ export const generateChildren = function (structure: any, route: any): any {
         routePath += `${param.name}`
       }
 
-      children.push({
+
+      result.push({
         path: routePath,
         name: routeName,
         props: {
@@ -50,32 +65,33 @@ export const generateChildren = function (structure: any, route: any): any {
         },
         component: getPageComponent(structure.value, route.page)
       })
+      console.log(1, routePath, routeName, result)
     }
   } else {
-    children.push({
-      path: '',
-      name: route.name,
-      props: {
-        components: getPageComponents(structure.value, route.page)
-      },
-      component: getPageComponent(structure.value, route.page)
-    })
+    routeCreated.name = route.name
+    routeCreated.component = getPageComponent(structure.value, route.page)
+    routeCreated.props = {
+      components: getPageComponents(structure.value, route.page)
+    }
   }
+  result.push(routeCreated)
 
-  return children
+  return result
 }
 
-export const getRouteGenerated = function (structure: any, route: any) {
-  const children = generateChildren(structure, route)
-  let routeName = route.name
-  if (routeName !== 'index') {
-    routeName = getLayoutName(structure.value, route.layout)
-  }
+/*
+* Creates a array with all the routes based on the structure object
+*/
+export const getRoutesGenerated = function (structure: any) {
+  const routes = structure.value.routes
+  let result: any = []
 
-  const result: any = {
-    path: route.path,
-    component: getLayoutComponent(structure.value, route.layout),
-    children
+  for (let index = 0; index < routes.length; index++) {
+    const route = routes[index];
+    result = [
+      ...result,
+      ...getRouteGenerated(structure, route)
+    ]
   }
 
   return result

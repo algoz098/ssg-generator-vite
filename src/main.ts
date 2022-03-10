@@ -3,7 +3,8 @@ import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'
 import useItems from './composables/useItems'
 import useStructure from './composables/useStructure'
-import { getRouteGenerated } from './js/getRoute'
+import { getRoutesGenerated } from './js/getRoute'
+
 
 const {
   load, structure
@@ -24,10 +25,10 @@ if (import.meta.env?.VITE_SSG === 'true') {
   if (structure.value.routes.length < 1) throw `Structure of routes not defined`
 
   await loadStartPages()
-  for (let index = 0; index < structure.value.routes.length; index++) {
-    const route = structure.value.routes[index];
-    const result = getRouteGenerated(structure, route)
-    routes.push(result)
+  const routesGenerated = getRoutesGenerated(structure)
+  for (let index = 0; index < routesGenerated.length; index++) {
+    const route = routesGenerated[index];
+    routes.push(route)
   }
 }
 
@@ -60,10 +61,18 @@ export const createApp = ViteSSG(
     }
 
     if (!structure.value?.routes?.length) throw `Structure of routes not defined`
-    for (let index = 0; index < structure.value.routes.length; index++) {
-      const route = structure.value.routes[index];
-      const result = getRouteGenerated(structure, route)
-      router.addRoute(result)
+
+    const routesGenerated = getRoutesGenerated(structure)
+    for (let index = 0; index < routesGenerated.length; index++) {
+      const route = routesGenerated[index];
+      router.addRoute(route)
     }
+
+    // console.log(1, router.getRoutes())
+    // for (let index = 0; index < structure.value.routes.length; index++) {
+    //   const route = structure.value.routes[index];
+    //   const result = getRouteGenerated(structure, route)
+    //   router.addRoute(result)
+    // }
 
   })
