@@ -44,6 +44,6 @@ SSG plugins uses the SSR plugin to create the static files
 - Missing features
   - nested SEO
   - JSON Schema
-  - JSON example
   - More CSS libraries
   - Create commands to generate and tar the static files for a requester.
+  - Create github page with example

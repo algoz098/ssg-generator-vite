@@ -27,6 +27,7 @@
     "cors": "^2.8.5",
     "critters": "^0.0.16",
     "express": "^4.17.3",
+    "jsonschema": "^1.4.0",
     "nodemon": "^2.0.15",
     "postcss": "^8.4.7",
     "sass": "1.32.0",
