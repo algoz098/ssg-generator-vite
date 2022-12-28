@@ -3,6 +3,7 @@ import config, {getData} from '../js/config'
 
 async function prerender() {
     if (!structure) await load()
+
     const { routes } = await config()
 
     return routes

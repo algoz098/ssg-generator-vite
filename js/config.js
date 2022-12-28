@@ -17,13 +17,16 @@ async function useGenerator(page) {
     const getPage = async function(currentPage) {
         let data = await grabPage(currentPage, page)
         if (!data || !data.length) return
-        
+        const urlOriginal = `${page.route.path}/${page.data.paginate.page.routeKey}-${currentPage}`
+        const props = await getData({urlOriginal, data})
+
         const pageRoute = {
-            url: `${page.route.path}/${page.data.paginate.page.routeKey}-${currentPage}`,
+            url: urlOriginal,
 
             pageContext: {
                 pageProps: {
-                    struture: structure,
+                    ...props,
+                    structure: structure,
                     data: data
                 }
             }
@@ -42,7 +45,7 @@ async function useGenerator(page) {
     
                 pageContext: {
                     pageProps: {
-                        struture: structure,
+                        structure: structure,
                         data: item
                     }
                 }
@@ -105,11 +108,14 @@ export async function generateRoutes() {
         if (page.type === 'generator') {
             await useGenerator(page)
         } else {
+            const urlOriginal = page.route.path
+            const props = await getData({urlOriginal})
             let route = {
                 url: page.route.path,
                 pageContext: {
                     pageProps: {
-                        struture: structure
+                        ...props,
+                        structure
                     }
                 }
             }
@@ -184,7 +190,7 @@ function getComponents (page, isGenerated) {
     return structure.components.filter((e) => page.components.includes(e.name))
 }
 
-export async function getData({urlOriginal}) {
+export async function getData({urlOriginal, data}) {
     if (!structure) await load()
     
     let result = null
@@ -193,11 +199,11 @@ export async function getData({urlOriginal}) {
     const generated = isGenerated(urlOriginal)
     const components = getComponents(page, generated)
 
-    if (pageNumber) {
+    if (pageNumber && !data) {
         result = await grabPage(pageNumber, page)
     }
 
-    if (generated) {
+    if (generated && !data) {
         result = await grabSingle(urlOriginal, page)
     }
 
