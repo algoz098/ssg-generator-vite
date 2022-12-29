@@ -51,30 +51,35 @@ const pages = [
         name: 'articles-pages',
         type: 'generator',
         data: {
-            baseUrl: 'https://jsonplaceholder.typicode.com',
+            baseUrl: 'https://dummyjson.com',
             single: {
                 endpoint: {
-                    route: '/posts/{id}',
+                    route: '/products/{id}',
                     dataPath: [
                         'id'
                     ]
                 }
             },
             paginate: {
+                type: 'slice', // slice, page
                 endpoint: {
-                    route: '/posts',
+                    route: '/products',
                 },
                 perPage: {
                     value: 10,
-                    apiKey: '_limit'
+                    apiKey: 'limit'
                 },
                 page: {
                     routeKey: 'pagina',
-                    apiKey: '_page'
+                    apiKey: 'skip'
                 },
-                total: false
+                lastPage: {
+                    apiKey: 'total'
+                }
             },
-            path: [],
+            path: [
+                'products'
+            ],
             routeSlug: 'id'
         },
         generated: [
@@ -84,10 +89,11 @@ const pages = [
             path: '/articles-page',
         },
         components: [
-            'articleIntro'
+            // 'articleIntro'
         ],
         after: [
-            'pagination'
+            // 'pagination',
+            'paginationButtons'
         ]
     }
 
@@ -95,16 +101,124 @@ const pages = [
 
 const components = [
     {
+        name: 'paginationButtons',
+        tag: 'div',
+        type: 'paginationButtons',
+        contextButton: 'pageBtn',
+        events: {
+        },
+        props: {
+            style: {
+                margin: '16px 0px'
+            }
+        },
+        children: [
+        ]
+    },
+    {
+        name: 'pageBtn',
+        tag: 'a',
+        type: 'basic',
+        context: {
+            previousPage: {
+                props: {
+                    text: '<< Anterior',
+                    href: {
+                        type: 'interpolate',
+                        value: '/articles-page/pagina-{pageNumber}',
+                        pageNumber: {
+                            origin: 'pageNumber',
+                            action: 'minus',
+                            name: 'pageNumber'
+                        }
+                    },
+                }
+            },
+            intermediate: {
+                props: {
+                    text: '...',
+                },
+            },
+            pageButton: {
+                props: {
+                    text: {
+                        type: 'interpolate',
+                        value: '{pageNumber}',
+                        pageNumber: {
+                            origin: 'pageNumber',
+                            action: 'context',
+                            name: 'pageNumber'
+                        }
+                    },
+                    class: {
+                        type: 'interpolate',
+                        value: '{disabled}',
+                        disabled: {
+                            origin: 'condition',
+                            action: 'eq',
+                            dataOrigin: 'context',
+                            dataTarget: 'pageNumber'
+                        }
+                    },
+                    href: {
+                        type: 'interpolate',
+                        value: '/articles-page/pagina-{pageNumber}',
+                        pageNumber: {
+                            origin: 'pageNumber',
+                            action: 'context',
+                            name: 'pageNumber'
+                        }
+                    }
+                }
+            },
+            nextPage: {
+                props: {
+                    text: 'Proximo >>',
+                    href: {
+                        type: 'interpolate',
+                        value: '/articles-page/pagina-{pageNumber}',
+                        pageNumber: {
+                            origin: 'pageNumber',
+                            action: 'add',
+                            name: 'pageNumber'
+                        }
+                    }
+                },
+
+            }
+        },
+        events: {
+        },
+        props: {
+            text: {
+                type: 'context'
+            },
+            href: {
+                type: 'context'
+            },
+            class: {
+                type: 'context'
+            },
+            style: {
+                border: '1px solid black',
+                padding: '8px',
+                margin: '10px 2px'
+            }
+        },
+        children: [
+        ]
+    },
+    {
         name: 'pagination',
         tag: 'div',
         type: 'basic',
-        text: null,
         events: {
         },
         props: {
         },
         children: [
             'pagePrev',
+            'pageNumber',
             'pageNext'
         ]
     },
@@ -112,11 +226,12 @@ const components = [
         name: 'pageNext',
         tag: 'a',
         type: 'basic',
-        text: 'Prox',
         events: {
         },
         props: {
+            text: 'Prox',
             href: {
+                type: 'interpolate',
                 value: '/articles-page/pagina-{pageNumber}',
                 pageNumber: {
                     origin: 'pageNumber',
@@ -129,14 +244,37 @@ const components = [
         ]
     },
     {
-        name: 'pagePrev',
-        tag: 'a',
+        name: 'pageNumber',
+        tag: 'span',
         type: 'basic',
-        text: 'Prev',
+        
         events: {
         },
         props: {
+            style: 'padding: 5px',
+            text: {
+                type: 'interpolate',
+                value: 'Pagina: {pageNumber}',
+                pageNumber: {
+                    origin: 'pageNumber',
+                    action: 'show',
+                    name: 'pageNumber'
+                }
+            },
+        },
+        children: [
+        ]
+    },
+    {
+        name: 'pagePrev',
+        tag: 'a',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            text: 'Prev',
             href: {
+                type: 'interpolate',
                 value: '/articles-page/pagina-{pageNumber}',
                 pageNumber: {
                     origin: 'pageNumber',
@@ -156,9 +294,9 @@ const components = [
         },
         props: {
             to: '/about',
-            class: 'something'
+            class: 'something',
+            text: 'NuxtLink1',
         },
-        text: 'NuxtLink1',
         children: []
     },
 
@@ -169,8 +307,8 @@ const components = [
         events: {
         },
         props: {
+            text: 'Div text 01',
         },
-        text: 'Div text 01',
         children: []
     },
 
@@ -178,7 +316,6 @@ const components = [
         name: 'article',
         type: 'dynamic',
         tag: 'div',
-        renderText: null,
         children: [
             'articleTitle',
             'articleBody'
@@ -193,7 +330,6 @@ const components = [
         name: 'articleIntro',
         type: 'dynamic',
         tag: 'div',
-        renderText: null,
         children: [
             'articleTitle'
         ],
@@ -207,13 +343,19 @@ const components = [
         name: 'articleTitle',
         type: 'dynamic',
         tag: 'a',
-        renderText: [
-            'title'
-        ],
         events: {
         },
         props: {
+            text: {
+                type: 'data',
+
+                path: [
+                    'title'
+                ],
+            },
+
             href: {
+                type: 'interpolate',
                 value: '/articles-page/{id}',
                 id: {
                     origin: 'data',
@@ -229,12 +371,16 @@ const components = [
         name: 'articleBody',
         type: 'dynamic',
         tag: 'div',
-        renderText: [
-            'body'
-        ],
         events: {
         },
         props: {
+            text: {
+                type: 'data',
+
+                path: [
+                    'description'
+                ],
+            },
         },
     }
 ]

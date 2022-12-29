@@ -1,13 +1,28 @@
 import { computed, ref } from 'vue'
-import {interpolateData, interpolateProp} from './interpolation'
+import {
+  interpolateInvalid,
+  interpolateProp,
+  interpolateDataProp,
+  interpolateContext
+} from './interpolation'
 
-export default function useComponent(name, data, structure, pageNumber) {
+export default function useComponent({
+  name,
+  data,
+  structure,
+  pageNumber,
+  hasNextPage,
+  context,
+  contextData
+}) {
   const component = computed(() => structure.components.find(e => e.name === name))
-  
-  const isInvalid = ref(false)
 
+  const isInvalid = interpolateInvalid(component, pageNumber, hasNextPage)
+  
   const props = computed(() => {
+    
     const props = JSON.parse(JSON.stringify(component.value?.props ?? {}))
+
     for (const key in props) {
       if (Object.prototype.hasOwnProperty.call(props, key)) {
         const prop = props[key];
@@ -17,7 +32,38 @@ export default function useComponent(name, data, structure, pageNumber) {
           !Array.isArray(prop) &&
           prop !== null
         ) {
-          props[key] = interpolateProp({isInvalid, name, key, data, prop, pageNumber})
+          if (prop.type === 'context') {
+            props[key] = interpolateContext({
+              component: component.value,
+              context,
+              contextData,
+              name,
+              key,
+              data,
+              prop,
+              pageNumber
+            })
+          }
+
+          if (prop.type === 'data') {
+            props[key] = interpolateDataProp({
+              name,
+              key,
+              data,
+              prop,
+              pageNumber
+            })
+          }
+
+          if (prop.type === 'interpolate') {
+            props[key] = interpolateProp({
+              name,
+              key,
+              data,
+              prop,
+              pageNumber
+            })
+          }
         }
       }
     }
@@ -26,8 +72,8 @@ export default function useComponent(name, data, structure, pageNumber) {
   })
 
   return {
-    structure,
     isInvalid,
+    structure,
     component,
     props,
   }

@@ -4,6 +4,8 @@
             <template v-for="(data, dataIndex) in data">
                 <render-component
                     :page-number="pageNumber"
+                    :has-next-page="hasNextPage"
+                    :last-page="lastPage"
                     :name="component.name"
                     v-for="(component, index) in components"
                     :key="`component_${dataIndex}_${index}`"
@@ -15,6 +17,8 @@
             <template v-if="page.after">
                 <render-component
                     :page-number="pageNumber"
+                    :has-next-page="hasNextPage"
+                    :last-page="lastPage"
                     :name="name"
                     v-for="(name, index) in page.after"
                     :key="`after_${dataIndex}_${index}`"
@@ -26,6 +30,8 @@
         
         <render-component
             :page-number="pageNumber"
+            :has-next-page="hasNextPage"
+            :last-page="lastPage"
             :name="component.name"
             v-for="(component, index) in components"
             :key="`component_${index}`"
@@ -34,15 +40,15 @@
             v-else
         /> 
     </template>
-    <pre ><b>loaded:</b> {{loaded}}</pre>
-    <pre ><b>isGenerated:</b> {{isGenerated}}</pre>
-    <pre ><b>isGenerator:</b> {{isGenerator}}</pre>
-    <pre ><b>pageNumber:</b> {{pageNumber}}</pre>
-    <pre v-if="components"><b>components:</b> {{components}}</pre>
-    <pre v-if="page"><b>page:</b> {{page}}</pre>
-    <pre v-if="structure"><b>structure:</b> {{structure}}</pre>
-    <pre v-if="data"><b>data:</b> {{data}}</pre>
-    <pre><b>props:</b> {{props}}</pre>
+    <!-- <pre ><b>loaded:</b> {{loaded}}</pre> -->
+    <!-- <pre ><b>isGenerated:</b> {{isGenerated}}</pre> -->
+    <!-- <pre ><b>isGenerator:</b> {{isGenerator}}</pre> -->
+    <!-- <pre ><b>pageNumber:</b> {{pageNumber}}</pre> -->
+    <!-- <pre v-if="components"><b>components:</b> {{components}}</pre> -->
+    <!-- <pre v-if="page"><b>page:</b> {{page}}</pre> -->
+    <!-- <pre v-if="structure"><b>structure:</b> {{structure}}</pre> -->
+    <!-- <pre v-if="data"><b>data:</b> {{data}}</pre> -->
+    <!-- <pre><b>props:</b> {{props}}</pre> -->
 </template>
 
 <script setup>
@@ -52,7 +58,9 @@ const props = defineProps([
     'structure',
     'data',
     'pageNumber',
+    'lastPage',
     'page',
+    'hasNextPage',
     'isGenerated',
     'isGenerator',
     'components'

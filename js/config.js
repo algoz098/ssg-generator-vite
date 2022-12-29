@@ -15,10 +15,10 @@ async function useGenerator(page) {
     console.log(`Paginate: ${!page.data.paginate}`)
 
     const getPage = async function(currentPage) {
-        let data = await grabPage(currentPage, page)
-        if (!data || !data.length) return
+        let {data, pagination} = await grabPage(currentPage, page)
+        if (!data || !data.length) return 
         const urlOriginal = `${page.route.path}/${page.data.paginate.page.routeKey}-${currentPage}`
-        const props = await getData({urlOriginal, data})
+        const props = await getData({urlOriginal, data, pagination})
 
         const pageRoute = {
             url: urlOriginal,
@@ -58,25 +58,48 @@ async function useGenerator(page) {
     await getPage(1)
 }
 
+function generatePagination (data, currentPage, structurePaginate) {
+    const result = {
+        lastPage: data[structurePaginate.lastPage.apiKey] / structurePaginate.perPage.value,
+        page: currentPage,
+        perPage: structurePaginate.perPage.value
+    }
+
+    return result
+}
+
 async function grabPage (currentPage, page) {
-    console.log(`Grabbring page ${currentPage}`)
 
     let { route } = page.data.paginate.endpoint
+    
+    let realPage = currentPage
+    if (page.data.paginate.type === 'slice') {
+        realPage = currentPage === 1 ? 0 : (currentPage - 1) * page.data.paginate.perPage.value
+    }
 
     let params = { 
         [page.data.paginate.perPage.apiKey]: page.data.paginate.perPage.value,
-        [page.data.paginate.page.apiKey]: currentPage
+        [page.data.paginate.page.apiKey]: realPage
     }
 
     let {data} = await axios.get(`${page.data.baseUrl}${route}`, {params, headers})
     
-    if (!data || !data.length) return
+    if (!data && !data.length) return {
+        data: null,
+        pagination: null
+    }
     
+    const pagination = generatePagination(data, currentPage, page.data.paginate)
+
     for (let index = 0; index < page.data.path.length; index++) {
         const path = page.data.path[index];
-        if (data[path]) data = data[path]
+        if (data[path]) {
+            data = data[path]
+            delete pagination[path]
+        }
     }
-    return data
+
+    return {pagination, data}
 }
 async function grabSingle (urlOriginal, page) {
     const key = urlOriginal.replace(`${page.route.path}/`, '')
@@ -182,7 +205,7 @@ function getPageNumber (urlOriginal, page) {
     if (!generator) return null
     const parts = urlOriginal.split(`${page.data.paginate.page.routeKey}-`)
     let result = parts[parts.length - 1]
-    return result
+    return Number(result)
 }
 
 function getComponents (page, isGenerated) {
@@ -190,7 +213,7 @@ function getComponents (page, isGenerated) {
     return structure.components.filter((e) => page.components.includes(e.name))
 }
 
-export async function getData({urlOriginal, data}) {
+export async function getData({urlOriginal, data, pagination}) {
     if (!structure) await load()
     
     let result = null
@@ -198,9 +221,28 @@ export async function getData({urlOriginal, data}) {
     const pageNumber = getPageNumber(urlOriginal, page)
     const generated = isGenerated(urlOriginal)
     const components = getComponents(page, generated)
+    let hasNextPage = false
+    let lastPage = false
 
     if (pageNumber && !data) {
-        result = await grabPage(pageNumber, page)
+        const {data: resultData, pagination} = await grabPage(pageNumber, page)
+        result = resultData
+        lastPage = pagination?.lastPage
+        if (!pagination) {
+            const nextPageRequest = await grabPage(pageNumber+1, page)
+            hasNextPage = (!!nextPageRequest.data && nextPageRequest.data.length > 0)
+        } else {
+            hasNextPage = lastPage > pageNumber
+        }
+    } else if (pageNumber && pagination) {
+        // console.log('EXCEPTION: TO DO <<')
+        lastPage = pagination?.lastPage
+        hasNextPage = lastPage > pageNumber
+    } else if (pageNumber && !pagination) {
+        const nextPageRequest = await grabPage(pageNumber+1, page)
+        hasNextPage = (!!nextPageRequest.data && nextPageRequest.data.length > 0)
+        lastPage = pagination?.lastPage
+        hasNextPage = lastPage > pageNumber
     }
 
     if (generated && !data) {
@@ -209,8 +251,10 @@ export async function getData({urlOriginal, data}) {
 
     return {
         data: result,
-        page: page,
-        pageNumber: pageNumber,
+        page,
+        pageNumber,
+        hasNextPage,
+        lastPage,
         components,
         isGenerated: generated,
         isGenerator: !!pageNumber
