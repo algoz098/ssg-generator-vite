@@ -40,15 +40,15 @@
             v-else
         /> 
     </template>
-    <!-- <pre ><b>loaded:</b> {{loaded}}</pre> -->
-    <!-- <pre ><b>isGenerated:</b> {{isGenerated}}</pre> -->
-    <!-- <pre ><b>isGenerator:</b> {{isGenerator}}</pre> -->
-    <!-- <pre ><b>pageNumber:</b> {{pageNumber}}</pre> -->
-    <!-- <pre v-if="components"><b>components:</b> {{components}}</pre> -->
-    <!-- <pre v-if="page"><b>page:</b> {{page}}</pre> -->
-    <!-- <pre v-if="structure"><b>structure:</b> {{structure}}</pre> -->
-    <!-- <pre v-if="data"><b>data:</b> {{data}}</pre> -->
-    <!-- <pre><b>props:</b> {{props}}</pre> -->
+    <!-- <pre ><b>loaded:</b> {{loaded}}</pre>
+    <pre ><b>isGenerated:</b> {{isGenerated}}</pre>
+    <pre ><b>isGenerator:</b> {{isGenerator}}</pre>
+    <pre ><b>pageNumber:</b> {{pageNumber}}</pre>
+    <pre v-if="components"><b>components:</b> {{components}}</pre>
+    <pre v-if="page"><b>page:</b> {{page}}</pre>
+    <pre v-if="structure"><b>structure:</b> {{structure}}</pre>
+    <pre v-if="data"><b>data:</b> {{data}}</pre>
+    <pre><b>props:</b> {{props}}</pre> -->
 </template>
 
 <script setup>

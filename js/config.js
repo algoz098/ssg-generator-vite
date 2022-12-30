@@ -1,5 +1,6 @@
 import { load, structure } from './structure'
 import generatorCss from './css'
+import generatorMetatags from './metatags'
 import axios from 'axios'
 
 const headers =  { "Accept-Encoding": "gzip,deflate,compress" } 
@@ -13,7 +14,6 @@ async function useGenerator(page) {
 
     console.log(`--- USING GENERATOR ---`)
     console.log(`Base url: ${page.data.baseUrl}`)
-    console.log(`Paginate: ${!page.data.paginate}`)
 
     const getPage = async function(currentPage) {
         let {data, pagination} = await grabPage(currentPage, page)
@@ -23,10 +23,16 @@ async function useGenerator(page) {
 
         const css = await generatorCss(structure, page, true)
 
+        const metatags = await generatorMetatags({
+            ...props, structure, data
+        })
+
         const pageRoute = {
             url: urlOriginal,
 
             pageContext: {
+                metatags,
+                language: structure.language,
                 css,
                 pageProps: {
                     ...props,
@@ -42,16 +48,34 @@ async function useGenerator(page) {
         for (let index = 0; index < data.length; index++) {
             const item = data[index];
 
+            // if (currentPage === 1 && index === 0) console.log(99999)
+
             if (!item[dataKey]) continue
+            const url = `${page.route.path}/${item[dataKey]}`
             const css = await generatorCss(structure, page, true)
+            const props = await getData({urlOriginal: url, data: item, pagination})
+
+            const metatags = await generatorMetatags({
+                ...props,
+                structure,
+                data,
+                isGenerated: true,
+                dataKey,
+                dataValue:
+                item[dataKey]
+            })
+
+            // console.log(url, metatags)
 
             const articleRoute = {
-                url: `${page.route.path}/${item[dataKey]}`,
+                url,
     
                 pageContext: {
                     css,
-                    
+                    language: structure.language,
+                    metatags,
                     pageProps: {
+                        ...props,
                         structure: structure,
                         data: item
                     }
@@ -110,14 +134,13 @@ async function grabPage (currentPage, page) {
 }
 async function grabSingle (urlOriginal, page) {
     const key = urlOriginal.replace(`${page.route.path}/`, '')
-    console.log(9, page.data)
     let { dataPath, route } = page.data.single.endpoint
 
     for (let index = 0; index < dataPath.length; index++) {
         const path = dataPath[index];
         route = route.replace(`{${path}}`, key)
     }
-
+    
     const url = `${page.data.baseUrl}${route}`
     console.log(`Grabbring single ${url}`)
 
@@ -143,10 +166,15 @@ export async function generateRoutes() {
 
             const urlOriginal = page.route.path
             const props = await getData({urlOriginal})
+            const metatags = await generatorMetatags({
+                structure, ...props
+            })
             let route = {
                 url: page.route.path,
                 pageContext: {
                     css,
+                    metatags,
+                    language: structure.language,
                     pageProps: {
                         ...props,
                         structure
@@ -220,7 +248,7 @@ function getPageNumber (urlOriginal, page) {
 }
 
 function getComponents (page, isGenerated) {
-    if (isGenerated ) return structure.components.filter((e) => page.generated.includes(e.name))
+    if (isGenerated ) return structure.components.filter((e) => page.generated.components.includes(e.name))
     return structure.components.filter((e) => page.components.includes(e.name))
 }
 

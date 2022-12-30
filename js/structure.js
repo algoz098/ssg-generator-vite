@@ -29,7 +29,7 @@ const pages = [
         ]
     },
     {
-        name: 'articles-pages',
+        name: 'articles',
         type: 'generator',
         data: {
             baseUrl: 'https://dummyjson.com',
@@ -63,11 +63,26 @@ const pages = [
             ],
             routeSlug: 'id'
         },
-        generated: [
-            'article'
-        ],
+        generated: {
+            metatags: [
+                {
+                    name: 'description',
+                    value: {
+                        type: 'data',
+
+                        path: [
+                            'description'
+                        ],
+                    },
+                    ogTag: true,
+                }
+            ],
+            components:[
+                'article'
+            ],
+        },
         route: {
-            path: '/articles-page',
+            path: '/articles',
         },
         components: [
             'articleIntro'
@@ -106,7 +121,7 @@ const components = [
                     text: '<< Anterior',
                     href: {
                         type: 'interpolate',
-                        value: '/articles-page/pagina-{pageNumber}',
+                        value: '/articles/pagina-{pageNumber}',
                         pageNumber: {
                             origin: 'pageNumber',
                             action: 'minus',
@@ -152,7 +167,7 @@ const components = [
                     },
                     href: {
                         type: 'interpolate',
-                        value: '/articles-page/pagina-{pageNumber}',
+                        value: '/articles/pagina-{pageNumber}',
                         pageNumber: {
                             origin: 'pageNumber',
                             action: 'context',
@@ -166,7 +181,7 @@ const components = [
                     text: 'Proximo >>',
                     href: {
                         type: 'interpolate',
-                        value: '/articles-page/pagina-{pageNumber}',
+                        value: '/articles/pagina-{pageNumber}',
                         pageNumber: {
                             origin: 'pageNumber',
                             action: 'add',
@@ -218,7 +233,7 @@ const components = [
             text: 'Prox',
             href: {
                 type: 'interpolate',
-                value: '/articles-page/pagina-{pageNumber}',
+                value: '/articles/pagina-{pageNumber}',
                 pageNumber: {
                     origin: 'pageNumber',
                     action: 'add',
@@ -261,7 +276,7 @@ const components = [
             text: 'Prev',
             href: {
                 type: 'interpolate',
-                value: '/articles-page/pagina-{pageNumber}',
+                value: '/articles/pagina-{pageNumber}',
                 pageNumber: {
                     origin: 'pageNumber',
                     action: 'minus',
@@ -354,7 +369,7 @@ const components = [
 
             href: {
                 type: 'interpolate',
-                value: '/articles-page/{id}',
+                value: '/articles/{id}',
                 id: {
                     origin: 'data',
                     path: [
@@ -384,6 +399,15 @@ const components = [
 ]
 
 const mockStrucutre = {
+    title: 'SSG Generator',
+    language: 'pt-BR',
+    metatags: [
+        {
+            name: 'description',
+            value: 'A Static-Site Generator based on dynamic data and articles.',
+            ogTag: true,
+        }
+    ],
     css: {
         tailwind: true
     },

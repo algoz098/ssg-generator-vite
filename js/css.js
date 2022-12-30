@@ -23,7 +23,7 @@ export default async function generator(structure, page, prod = false) {
         )
 
         if (page.after) components.push(...page.after)
-        if (page.generated) components.push(...page.generated)
+        if (page.generated) components.push(...page.generated.components)
 
         const componentsStructure = JSON.parse(
             JSON.stringify(
@@ -84,9 +84,6 @@ export default async function generator(structure, page, prod = false) {
         }
 
         html.raw = html.raw.replace(/\{(.*?)\}/g, '')
-
-        console.log(`Classes to process using tailwind:`)
-        console.log(html.raw)
         
         let tailwindConfig = {
             content: [
