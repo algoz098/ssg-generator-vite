@@ -54,7 +54,7 @@ export default async function generator(payload, prod = false) {
         if (ogTag) tags += `\t\t<meta name="og:${name}" content="${value}"/>\r\n`
     }
 
-    let favicon = `<link rel="icon" type="image/x-icon" href="${prod ? `/favicon.${structure.icon.extension}` : structure.icon.value}">`
+    let favicon = `<link rel="icon" type="image/x-icon" href="${prod ? `/assets/favicon.${structure.icon.extension}` : structure.icon.value}">`
 
     result += `${favicon}${title}${tags}`
     return result
