@@ -34,7 +34,7 @@ function getTagValue ({tag, structure, page, data, isGenerated, dataKey, dataVal
     return result
 }
 
-export default async function generator(payload) {
+export default async function generator(payload, prod = false) {
     const {structure, page, data} = payload
     let result = ''
 
@@ -53,7 +53,9 @@ export default async function generator(payload) {
         tags += `\t\t<meta name="${name}" content="${value}"/>\r\n`
         if (ogTag) tags += `\t\t<meta name="og:${name}" content="${value}"/>\r\n`
     }
-    
-    result += `${title}${tags}`
+
+    let favicon = `<link rel="icon" type="image/x-icon" href="${prod ? `/favicon.${structure.icon.extension}` : structure.icon.value}">`
+
+    result += `${favicon}${title}${tags}`
     return result
 }

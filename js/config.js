@@ -25,7 +25,7 @@ async function useGenerator(page) {
 
         const metatags = await generatorMetatags({
             ...props, structure, data
-        })
+        }, true)
 
         const pageRoute = {
             url: urlOriginal,
@@ -48,8 +48,6 @@ async function useGenerator(page) {
         for (let index = 0; index < data.length; index++) {
             const item = data[index];
 
-            // if (currentPage === 1 && index === 0) console.log(99999)
-
             if (!item[dataKey]) continue
             const url = `${page.route.path}/${item[dataKey]}`
             const css = await generatorCss(structure, page, true)
@@ -63,9 +61,7 @@ async function useGenerator(page) {
                 dataKey,
                 dataValue:
                 item[dataKey]
-            })
-
-            // console.log(url, metatags)
+            }, true)
 
             const articleRoute = {
                 url,
@@ -168,7 +164,7 @@ export async function generateRoutes() {
             const props = await getData({urlOriginal})
             const metatags = await generatorMetatags({
                 structure, ...props
-            })
+            }, true)
             let route = {
                 url: page.route.path,
                 pageContext: {

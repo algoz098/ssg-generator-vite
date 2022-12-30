@@ -2,10 +2,31 @@ import { load, structure } from '../js/structure'
 import config, {getData} from '../js/config'
 import generatorCss from '../js/css'
 import generatorMetatags from '../js/metatags'
+import axios from 'axios'
+import fs from 'fs'
 
+async function downloadImage (url, path) {  
+    const writer = fs.createWriteStream(path)
+  
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream'
+    })
+  
+    response.data.pipe(writer)
+  
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve)
+      writer.on('error', reject)
+    })
+  }
+  
 async function prerender() {
     if (!structure) await load()
 
+    console.log('DOWNLOADING REMOTE ICON', structure.icon.value)
+    await downloadImage(structure.icon.value,  `./dist/client/assets/favicon.${structure.icon.extension}`)
     const { routes } = await config()
     return routes
 }

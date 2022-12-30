@@ -401,6 +401,11 @@ const components = [
 const mockStrucutre = {
     title: 'SSG Generator',
     language: 'pt-BR',
+    icon: {
+        type: 'fixed',
+        extension: 'png',
+        value: 'https://arcode.online/arcode_iot_logo.png'
+    },
     metatags: [
         {
             name: 'description',
