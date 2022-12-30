@@ -1,4 +1,5 @@
 import { load, structure } from './structure'
+import generatorCss from './css'
 import axios from 'axios'
 
 const headers =  { "Accept-Encoding": "gzip,deflate,compress" } 
@@ -20,10 +21,13 @@ async function useGenerator(page) {
         const urlOriginal = `${page.route.path}/${page.data.paginate.page.routeKey}-${currentPage}`
         const props = await getData({urlOriginal, data, pagination})
 
+        const css = await generatorCss(structure, page, true)
+
         const pageRoute = {
             url: urlOriginal,
 
             pageContext: {
+                css,
                 pageProps: {
                     ...props,
                     structure: structure,
@@ -39,11 +43,14 @@ async function useGenerator(page) {
             const item = data[index];
 
             if (!item[dataKey]) continue
+            const css = await generatorCss(structure, page, true)
 
             const articleRoute = {
                 url: `${page.route.path}/${item[dataKey]}`,
     
                 pageContext: {
+                    css,
+                    
                     pageProps: {
                         structure: structure,
                         data: item
@@ -103,6 +110,7 @@ async function grabPage (currentPage, page) {
 }
 async function grabSingle (urlOriginal, page) {
     const key = urlOriginal.replace(`${page.route.path}/`, '')
+    console.log(9, page.data)
     let { dataPath, route } = page.data.single.endpoint
 
     for (let index = 0; index < dataPath.length; index++) {
@@ -131,11 +139,14 @@ export async function generateRoutes() {
         if (page.type === 'generator') {
             await useGenerator(page)
         } else {
+            const css = await generatorCss(structure, page, true)
+
             const urlOriginal = page.route.path
             const props = await getData({urlOriginal})
             let route = {
                 url: page.route.path,
                 pageContext: {
+                    css,
                     pageProps: {
                         ...props,
                         structure

@@ -18,8 +18,13 @@ export function interpolateData(target, dataResolved) {
 export function interpolateCondition(data) {
     const {search, target, pageNumber, context} = data
     let result  = ''
+    
+    let from = data.target.from.origin === 'fixed' ? data.target.from.value : data[data.target.from.origin]
+    let to = data.target.to.origin === 'fixed' ? data.target.to.value : data[data.target.to.origin]
+    let resultInterpolated = data.target.result.origin === 'fixed' ? data.target.result.value : data[data.target.result.origin]
+    
 
-    if (target.action === 'eq' && data[target.dataOrigin] === data[target.dataTarget]) result = search
+    if (target.action === 'eq' && from === to) result = resultInterpolated
 
     return result
 }
@@ -75,7 +80,7 @@ export function interpolateProp({name, key, data, prop, pageNumber}) {
     let result = prop.value
     let params = result.match(/\{(.*?)\}/g);
     let searchble = params.map((e) => e.replace('{', '').replace('}', ''));
-
+    
     for (let index = 0; index < searchble.length; index++) {
         const search = searchble[index];
         const target = prop[search];
@@ -86,6 +91,8 @@ export function interpolateProp({name, key, data, prop, pageNumber}) {
             dataResolved = interpolateData(target, dataResolved)
         } else if (target.origin === 'pageNumber') {
             dataResolved = interpolatePageNumber(target, pageNumber)
+        } else if (target.origin === 'condition') {
+            dataResolved = interpolateCondition({search, target, pageNumber, context: null})
         }
 
         if (['number', 'string'].includes(typeof dataResolved)) {
@@ -108,7 +115,6 @@ export function interpolateContext({context, name, key, data,  pageNumber, compo
         prop !== null
     ) {
         result = prop.value
-        
         let params = result.match(/\{(.*?)\}/g);
         let searchble = params.map((e) => e.replace('{', '').replace('}', ''));
 
@@ -125,6 +131,7 @@ export function interpolateContext({context, name, key, data,  pageNumber, compo
                 dataResolved = interpolatePageNumber(target, pageNumber, contextData)
             }else if (target.origin === 'condition') {
                 dataResolved = interpolateCondition({search, target, pageNumber, context: contextData})
+
             }
 
             if (['number', 'string'].includes(typeof dataResolved)) {
@@ -134,6 +141,8 @@ export function interpolateContext({context, name, key, data,  pageNumber, compo
             }
         }
     }
+
+    if (component.props[key]?.value) result = `${component.props[key].value} ${result}`
 
     return result
 }

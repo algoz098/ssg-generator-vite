@@ -18,5 +18,11 @@
     "vite": "^4.0.3",
     "vite-plugin-ssr": "^0.4.67",
     "vue": "^3.2.33"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.13",
+    "cssnano": "^5.1.14",
+    "postcss": "^8.4.20",
+    "tailwindcss": "^3.2.4"
   }
 }

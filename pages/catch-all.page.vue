@@ -54,6 +54,7 @@
 <script setup>
 import { computed } from 'vue'
 import RenderComponent from '../components/RenderComponent.vue'
+
 const props = defineProps([
     'structure',
     'data',
@@ -74,4 +75,11 @@ const loaded = computed(() => {
     return false
 })
 
+
 </script>
+
+<style>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</style>

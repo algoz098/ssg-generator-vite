@@ -15,7 +15,6 @@ async function render(pageContext) {
   const { documentProps } = pageContext.exports
   const title = (documentProps && documentProps.title) || 'Vite SSR app'
   const desc = (documentProps && documentProps.description) || 'App using Vite + vite-plugin-ssr'
-
   const documentHtml = escapeInject`<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -24,6 +23,7 @@ async function render(pageContext) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${desc}" />
         <title>${title}</title>
+        <style>${pageContext.css}</style>
       </head>
       <body>
         <div id="app">${dangerouslySkipEscape(appHtml)}</div>

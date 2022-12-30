@@ -14,7 +14,7 @@ const pages = [
             path: '/'
         },
         components: [
-            'divText01'
+            'tailwindBtn'
         ]
     },
     {
@@ -28,25 +28,6 @@ const pages = [
             'divText01'
         ]
     },
-    // {
-    //     name: 'articles',
-    //     type: 'generator',
-    //     data: {
-    //         baseUrl: 'https://jsonplaceholder.typicode.com/posts',
-    //         paginate: false,
-    //         path: [],
-    //         routeSlug: 'id'
-    //     },
-    //     generated: [
-    //         'article'
-    //     ],
-    //     route: {
-    //         path: '/articles',
-    //     },
-    //     components: [
-    //         'articleIntro'
-    //     ]
-    // },
     {
         name: 'articles-pages',
         type: 'generator',
@@ -89,7 +70,7 @@ const pages = [
             path: '/articles-page',
         },
         components: [
-            // 'articleIntro'
+            'articleIntro'
         ],
         after: [
             // 'pagination',
@@ -137,6 +118,7 @@ const components = [
             intermediate: {
                 props: {
                     text: '...',
+                    class: 'opacity-75'
                 },
             },
             pageButton: {
@@ -156,8 +138,16 @@ const components = [
                         disabled: {
                             origin: 'condition',
                             action: 'eq',
-                            dataOrigin: 'context',
-                            dataTarget: 'pageNumber'
+                            from: {
+                                origin: 'context'
+                            },
+                            to: {
+                                origin: 'pageNumber',
+                            },
+                            result: {
+                                origin: 'fixed',
+                                value: 'cursor-not-allowed focus:outline-none opacity-75'
+                            }
                         }
                     },
                     href: {
@@ -197,13 +187,9 @@ const components = [
                 type: 'context'
             },
             class: {
-                type: 'context'
+                type: 'context',
+                value: 'my-10 mx-2 p-8 py-3 text-white bg-blue-600 rounded'
             },
-            style: {
-                border: '1px solid black',
-                padding: '8px',
-                margin: '10px 2px'
-            }
         },
         children: [
         ]
@@ -299,7 +285,19 @@ const components = [
         },
         children: []
     },
-
+    
+    {
+        name: 'tailwindBtn',
+        type: 'basic',
+        tag: 'button',
+        events: {
+        },
+        props: {
+            text: 'This is a tailwind button',
+            class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded',
+        },
+        children: []
+    },
     {
         name: 'divText01',
         type: 'basic',
@@ -386,6 +384,9 @@ const components = [
 ]
 
 const mockStrucutre = {
+    css: {
+        tailwind: true
+    },
     pages,
     components
 }
