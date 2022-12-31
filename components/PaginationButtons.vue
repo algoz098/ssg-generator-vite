@@ -4,6 +4,7 @@
             :page-number="pageNumber"
             :has-next-page="hasNextPage"
             :name="component.contextButton"
+            :url="url"
             :data="data"
             :structure="structure"
             context="previousPage"
@@ -12,6 +13,7 @@
         <render-component
             :page-number="pageNumber"
             :has-next-page="hasNextPage"
+            :url="url"
             :name="component.contextButton"
             :data="data"
             :structure="structure"
@@ -21,6 +23,7 @@
         />
         <render-component
             :page-number="pageNumber"
+            :url="url"
             :has-next-page="hasNextPage"
             :name="component.contextButton"
             :data="data"
@@ -32,6 +35,7 @@
         <template v-if="pageNumber > 1">
             <render-component
                 :page-number="pageNumber"
+                :url="url"
                 :has-next-page="hasNextPage"
                 :name="component.contextButton"
                 :data="data"
@@ -45,6 +49,7 @@
 
         <render-component
             :page-number="pageNumber"
+            :url="url"
             :has-next-page="hasNextPage"
             :name="component.contextButton"
             :data="data"
@@ -55,6 +60,7 @@
 
         <template v-if="pageNumber < lastPage">
             <render-component
+                :url="url"
                 :page-number="pageNumber"
                 :has-next-page="hasNextPage"
                 :name="component.contextButton"
@@ -69,6 +75,7 @@
 
         <render-component
             :page-number="pageNumber"
+            :url="url"
             :has-next-page="hasNextPage"
             :name="component.contextButton"
             :data="data"
@@ -80,6 +87,7 @@
         <render-component
             :page-number="pageNumber"
             :has-next-page="hasNextPage"
+            :url="url"
             :name="component.contextButton"
             :data="data"
             :structure="structure"
@@ -90,6 +98,7 @@
 
         <render-component
             :page-number="pageNumber"
+            :url="url"
             :has-next-page="hasNextPage"
             :name="component.contextButton"
             :data="data"
@@ -112,6 +121,7 @@ const {
     data: definedProps.data,
     structure: definedProps.structure,
     pageNumber: definedProps.pageNumber,
+    url: definedProps.url,
     hasNextPage: definedProps.hasNextPage,
     context: definedProps.context,
     contextData: definedProps.contextData
@@ -120,6 +130,7 @@ const {
 const definedProps = defineProps({
     component: Object,
     name: String,
+    url: String,
     data: Object|undefined,
     structure: Object|undefined,
     pageNumber: String|Number|undefined,

@@ -16,15 +16,15 @@ export function interpolateData(target, dataResolved) {
 
 // TODO - add more conditions and data origins
 export function interpolateCondition(data) {
-    const {search, target, pageNumber, context} = data
+    const {search, target, pageNumber, context,} = data
     let result  = ''
     
     let from = data.target.from.origin === 'fixed' ? data.target.from.value : data[data.target.from.origin]
     let to = data.target.to.origin === 'fixed' ? data.target.to.value : data[data.target.to.origin]
     let resultInterpolated = data.target.result.origin === 'fixed' ? data.target.result.value : data[data.target.result.origin]
     
-
     if (target.action === 'eq' && from === to) result = resultInterpolated
+    if (target.action === 'in' && from.includes(to)) result = resultInterpolated
 
     return result
 }
@@ -76,7 +76,7 @@ export function interpolateInvalid(component, pageNumber, hasNextPage) {
     return result
 }
 
-export function interpolateProp({name, key, data, prop, pageNumber}) {
+export function interpolateProp({name, key, data, prop, pageNumber, url}) {
     let result = prop.value
     let params = result.match(/\{(.*?)\}/g);
     let searchble = params.map((e) => e.replace('{', '').replace('}', ''));
@@ -92,7 +92,7 @@ export function interpolateProp({name, key, data, prop, pageNumber}) {
         } else if (target.origin === 'pageNumber') {
             dataResolved = interpolatePageNumber(target, pageNumber)
         } else if (target.origin === 'condition') {
-            dataResolved = interpolateCondition({search, target, pageNumber, context: null})
+            dataResolved = interpolateCondition({search, target, pageNumber, context: null, url})
         }
 
         if (['number', 'string'].includes(typeof dataResolved)) {
@@ -105,7 +105,7 @@ export function interpolateProp({name, key, data, prop, pageNumber}) {
     return result
 }
 
-export function interpolateContext({context, name, key, data,  pageNumber, component, contextData}) {
+export function interpolateContext({context, name, key, data,  pageNumber, component, contextData, url}) {
     const prop = component.context[context].props[key]
     let result = prop
 
@@ -130,7 +130,7 @@ export function interpolateContext({context, name, key, data,  pageNumber, compo
             } else if (target.origin === 'pageNumber') {
                 dataResolved = interpolatePageNumber(target, pageNumber, contextData)
             }else if (target.origin === 'condition') {
-                dataResolved = interpolateCondition({search, target, pageNumber, context: contextData})
+                dataResolved = interpolateCondition({search, target, pageNumber, context: contextData, url})
 
             }
 

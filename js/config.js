@@ -186,9 +186,12 @@ function getPage (urlOriginal) {
     if (urlOriginal === '/') return structure.pages.find(e => e.type === 'index')
     let result = structure.pages.find((e) => e?.route?.path === urlOriginal)
     
-    if (!result) result = structure.pages.find((e) => {
-        return e?.route?.path && e?.name !== 'index' && urlOriginal.includes(e.route.path)
-    })
+    if (!result) {
+        console.log(666, urlOriginal)
+        result = structure.pages.find((e) => {
+            return e?.route?.path && e?.name !== 'index' && urlOriginal.includes(e.route.path)
+        })
+    }
 
     return result
 }
@@ -244,6 +247,7 @@ function getPageNumber (urlOriginal, page) {
 }
 
 function getComponents (page, isGenerated) {
+    console.log(999, page)
     if (isGenerated ) return structure.components.filter((e) => page.generated.components.includes(e.name))
     return structure.components.filter((e) => page.components.includes(e.name))
 }
@@ -252,7 +256,10 @@ export async function getData({urlOriginal, data, pagination}) {
     if (!structure) await load()
     
     let result = null
+
     const page = getPage(urlOriginal)
+    console.log(888, page)
+
     const pageNumber = getPageNumber(urlOriginal, page)
     const generated = isGenerated(urlOriginal)
     const components = getComponents(page, generated)
@@ -291,6 +298,7 @@ export async function getData({urlOriginal, data, pagination}) {
         hasNextPage,
         lastPage,
         components,
+        url: urlOriginal,
         isGenerated: generated,
         isGenerator: !!pageNumber
     }

@@ -6,6 +6,7 @@
             :has-next-page="hasNextPage"
             :last-page="lastPage"
             :name="name"
+            :url="url"
             :data="data"
             :structure="structure"
         />
@@ -20,6 +21,7 @@
                 v-for="(child, index) in component.children"
                 :key="`child_${index}`"
                 :last-page="lastPage"
+                :url="url"
                 :has-next-page="hasNextPage"
                 :data="data"
                 :page-number="pageNumber"
@@ -27,11 +29,6 @@
             />
         </template>
     </component>
-
-    <!-- <pre>{{ context }}</pre>
-    <pre>{{ contextData }}</pre>
-    <pre v-if="component.context?.pageButton">{{ component.context.pageButton.props }}</pre>
-    <pre>{{ props }}</pre> -->
 </template>
 
 <script setup>
@@ -47,8 +44,10 @@ const definedProps = defineProps({
     hasNextPage: Boolean,
     context: String|undefined,
     contextData: Number|String|undefined,
-    lastPage: Number|undefined
+    lastPage: Number|undefined,
+    url: String
 })
+
 
 const {
   props,
@@ -61,6 +60,7 @@ const {
     pageNumber: definedProps.pageNumber,
     hasNextPage: definedProps.hasNextPage,
     context: definedProps.context,
+    url: definedProps.url,
     contextData: definedProps.contextData
 })
 </script>

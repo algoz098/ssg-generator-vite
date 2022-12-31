@@ -21,7 +21,7 @@ async function render(pageContext) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         ${pageContext.metatags ? dangerouslySkipEscape(pageContext.metatags) : ''}
-        <style>${pageContext.css}</style>
+        <style>${dangerouslySkipEscape(pageContext.css)}</style>
       </head>
       <body>
         <div id="app">${dangerouslySkipEscape(appHtml)}</div>

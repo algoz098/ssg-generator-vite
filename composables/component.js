@@ -13,8 +13,10 @@ export default function useComponent({
   pageNumber,
   hasNextPage,
   context,
+  url,
   contextData
 }) {
+
   const component = computed(() => structure.components.find(e => e.name === name))
 
   const isInvalid = interpolateInvalid(component, pageNumber, hasNextPage)
@@ -38,6 +40,7 @@ export default function useComponent({
               context,
               contextData,
               name,
+              url,
               key,
               data,
               prop,
@@ -59,6 +62,7 @@ export default function useComponent({
             props[key] = interpolateProp({
               name,
               key,
+              url,
               data,
               prop,
               pageNumber

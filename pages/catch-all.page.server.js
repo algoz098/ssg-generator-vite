@@ -39,6 +39,8 @@ async function onBeforeRender(pageContext) {
     let metatags = await generatorMetatags({
         structure, ...result
     })
+
+
     return {
         pageContext: {
             css,

@@ -14,6 +14,7 @@ const pages = [
             path: '/'
         },
         components: [
+            'navbar',
             'tailwindBtn'
         ]
     },
@@ -24,6 +25,7 @@ const pages = [
             path: '/about',
         },
         components: [
+            'navbar',
             'NuxtLink1',
             'divText01'
         ]
@@ -84,6 +86,9 @@ const pages = [
         route: {
             path: '/articles',
         },
+        before: [
+            'navbar',
+        ],
         components: [
             'articleIntro'
         ],
@@ -96,6 +101,244 @@ const pages = [
 ]
 
 const components = [
+    {
+        name: 'navbar',
+        tag: 'nav',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            class: 'bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900'
+        },
+        children: [
+            'navbar-container'
+        ]
+    },
+    {
+        name: 'navbar-container',
+        tag: 'div',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            class: 'container flex flex-wrap items-center justify-between mx-auto'
+        },
+        children: [
+            'logo',
+            'menu-toggle',
+            'menu'
+        ]
+    },
+    {
+        name: 'logo',
+        tag: 'a',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            href: '/',
+            class: 'flex items-center'
+        },
+        children: [
+            'logo-text'
+        ]
+    },
+    {
+        name: 'logo-text',
+        tag: 'span',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            text: 'SSG Generator',
+            class: 'self-center text-xl font-semibold whitespace-nowrap dark:text-white'
+        },
+        children: [
+        ]
+    },
+    {
+        name: 'menu-toggle',
+        tag: 'button',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            'data-collapse-toggle': "navbar-default",
+            type: "button",
+            text: 'Menu',
+            class: "inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600",
+            'aria-controls': "navbar-default",
+            'aria-expanded':"false"
+        },
+        children: [
+        ]
+    },
+    {
+        name: 'menu',
+        tag: 'div',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            id: 'navbar-default',
+            class: 'hidden w-full md:block md:w-auto'
+        },
+        children: [
+            'menu-list'
+        ]
+    },
+    {
+        name: 'menu-list',
+        tag: 'ul',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            class: 'flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700'
+        },
+        children: [
+            'menu-home',
+            'menu-about',
+            'menu-articles'
+        ]
+    },
+    {
+        name: 'menu-home',
+        tag: 'li',
+        type: 'basic',
+        events: {
+        },
+        props: {
+        },
+        children: [
+            'menu-home-a'
+        ]
+    },
+    {
+        name: 'menu-home-a',
+        tag: 'a',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            text: 'Home',
+            href: '/',
+            
+            class: {
+                value: 'block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent text-gray-700 {color}',
+                type: 'interpolate',
+                color: {
+                    origin: 'condition', /// FINALIZAR ESSA CONDICAO
+                    action: 'eq',
+                    from: {
+                        origin: 'url'
+                    },
+                    to: {
+                        origin: 'fixed',
+                        value: '/'
+                    },
+                    result: {
+                        origin: 'fixed',
+                        value: 'text-blue-700'
+                    }
+                }
+            },
+        },
+        children: [
+        ]
+    },
+
+    {
+        name: 'menu-about',
+        tag: 'li',
+        type: 'basic',
+        events: {
+        },
+        props: {
+        },
+        children: [
+            'menu-about-a'
+        ]
+    },
+    {
+        name: 'menu-about-a',
+        tag: 'a',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            text: 'About',
+            href: '/about',
+            class: {
+                value: 'block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent {color}',
+                type: 'interpolate',
+                color: {
+                    origin: 'condition',
+                    action: 'eq',
+                    from: {
+                        origin: 'url'
+                    },
+                    to: {
+                        origin: 'fixed',
+                        value: '/about'
+                    },
+                    result: {
+                        origin: 'fixed',
+                        value: 'text-blue-700'
+                    }
+                }
+            },
+        },
+        children: [
+        ]
+    },
+
+    {
+        name: 'menu-articles',
+        tag: 'li',
+        type: 'basic',
+        events: {
+        },
+        props: {
+        },
+        children: [
+            'menu-articles-a'
+        ]
+    },
+    {
+        name: 'menu-articles-a',
+        tag: 'a',
+        type: 'basic',
+        events: {
+        },
+        props: {
+            text: 'Articles',
+            href: '/articles/pagina-1',
+            
+            class: {
+                value: 'block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent {color}',
+                type: 'interpolate',
+                color: {
+                    origin: 'condition', /// FINALIZAR ESSA CONDICAO
+                    action: 'in',
+                    from: {
+                        origin: 'url'
+                    },
+                    to: {
+                        origin: 'fixed',
+                        value: '/articles/'
+                    },
+                    result: {
+                        origin: 'fixed',
+                        value: 'text-blue-700'
+                    }
+                }
+            },
+        },
+        children: [
+        ]
+    },
+
     {
         name: 'paginationButtons',
         tag: 'div',
@@ -400,7 +643,7 @@ const components = [
 
 const mockStrucutre = {
     title: 'SSG Generator',
-    language: 'pt-BR',
+    language: 'en-US',
     icon: {
         type: 'fixed',
         extension: 'png',

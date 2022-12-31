@@ -1,11 +1,26 @@
 <template>
     <template v-if="loaded">
         <template v-if="isGenerator && pageNumber">
+            <template v-if="page.before">
+                <render-component
+                    :page-number="pageNumber"
+                    :has-next-page="hasNextPage"
+                    :url="url"
+                    :last-page="lastPage"
+                    :name="name"
+                    v-for="(name, index) in page.before"
+                    :key="`before_${dataIndex}_${index}`"
+                    :structure="structure"
+                    :data="data"
+                />
+            </template>
+            
             <template v-for="(data, dataIndex) in data">
                 <render-component
                     :page-number="pageNumber"
                     :has-next-page="hasNextPage"
                     :last-page="lastPage"
+                    :url="url"
                     :name="component.name"
                     v-for="(component, index) in components"
                     :key="`component_${dataIndex}_${index}`"
@@ -17,6 +32,7 @@
             <template v-if="page.after">
                 <render-component
                     :page-number="pageNumber"
+                    :url="url"
                     :has-next-page="hasNextPage"
                     :last-page="lastPage"
                     :name="name"
@@ -31,6 +47,7 @@
         <render-component
             :page-number="pageNumber"
             :has-next-page="hasNextPage"
+            :url="url"
             :last-page="lastPage"
             :name="component.name"
             v-for="(component, index) in components"
@@ -40,15 +57,6 @@
             v-else
         /> 
     </template>
-    <!-- <pre ><b>loaded:</b> {{loaded}}</pre>
-    <pre ><b>isGenerated:</b> {{isGenerated}}</pre>
-    <pre ><b>isGenerator:</b> {{isGenerator}}</pre>
-    <pre ><b>pageNumber:</b> {{pageNumber}}</pre>
-    <pre v-if="components"><b>components:</b> {{components}}</pre>
-    <pre v-if="page"><b>page:</b> {{page}}</pre>
-    <pre v-if="structure"><b>structure:</b> {{structure}}</pre>
-    <pre v-if="data"><b>data:</b> {{data}}</pre>
-    <pre><b>props:</b> {{props}}</pre> -->
 </template>
 
 <script setup>
@@ -61,6 +69,7 @@ const props = defineProps([
     'pageNumber',
     'lastPage',
     'page',
+    'url',
     'hasNextPage',
     'isGenerated',
     'isGenerator',
@@ -77,9 +86,3 @@ const loaded = computed(() => {
 
 
 </script>
-
-<style>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-</style>
