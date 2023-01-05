@@ -1,3 +1,5 @@
+import { store } from './stores'
+import { computed } from 'vue'
 
 export function interpolateData(target, dataResolved) {
     for (let index = 0; index < target.path.length; index++) {
@@ -29,10 +31,60 @@ export function interpolateCondition(data) {
     return result
 }
 
+export function interpolateClass(data) {
+    const {prop, name} = data
+
+    let result  = computed(() => {
+        let classes = {}
+
+        for (const key in prop) {
+            if (key === 'type') continue
+            if (Object.hasOwnProperty.call(prop, key)) {
+                const item = prop[key];
+                if (item === true) {
+                    classes[key] = true
+                    continue
+                }
+
+                let check = false
+                    
+            
+                if (item.origin === 'store') {
+                    const storeSel = store.value[item.store]
+                    if (item.action === 'neq' && storeSel !== item.to.value) check = true
+                    else if (item.action === 'eq' && storeSel === item.to.value) check = true
+                }
+
+                classes[key] = check
+            }
+        }
+
+        return classes
+    })
+
+    return result
+}
+
+export function interpolateStore(data) {
+    const {search, target} = data
+    let result  = ''
+
+    const storeName = target.store
+    if (store.value[storeName]){
+        if (target.to && store.value[storeName] === target.to.value) result = target.result.value
+        else if (target.else) {
+            result = target.else.value
+        }
+        else result = target.result.value
+    }
+
+    return result
+}
+
 export function interpolatePageNumber(target, pageNumber, contextData) {
     pageNumber = Number(pageNumber)
     if (target.action === 'add') pageNumber += 1
-    if (target.action === 'minus') pageNumber -= 1
+    if (target.action === 'sub') pageNumber -= 1
 
     return pageNumber
 }
@@ -65,7 +117,7 @@ export function interpolateInvalid(component, pageNumber, hasNextPage) {
     
                     if (target.origin === 'pageNumber') {
                         if(target.action === 'add' && !hasNextPage) result = true 
-                        else if (target.action === 'minus' && pageNumber === 1) result = true
+                        else if (target.action === 'sub' && pageNumber === 1) result = true
                     }
                 }
             }
@@ -80,7 +132,6 @@ export function interpolateProp({name, key, data, prop, pageNumber, url}) {
     let result = prop.value
     let params = result.match(/\{(.*?)\}/g);
     let searchble = params.map((e) => e.replace('{', '').replace('}', ''));
-    
     for (let index = 0; index < searchble.length; index++) {
         const search = searchble[index];
         const target = prop[search];
@@ -93,6 +144,8 @@ export function interpolateProp({name, key, data, prop, pageNumber, url}) {
             dataResolved = interpolatePageNumber(target, pageNumber)
         } else if (target.origin === 'condition') {
             dataResolved = interpolateCondition({search, target, pageNumber, context: null, url})
+        } else if (target.origin === 'store') {
+            dataResolved = interpolateStore({search, target})
         }
 
         if (['number', 'string'].includes(typeof dataResolved)) {

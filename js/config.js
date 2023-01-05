@@ -187,7 +187,6 @@ function getPage (urlOriginal) {
     let result = structure.pages.find((e) => e?.route?.path === urlOriginal)
     
     if (!result) {
-        console.log(666, urlOriginal)
         result = structure.pages.find((e) => {
             return e?.route?.path && e?.name !== 'index' && urlOriginal.includes(e.route.path)
         })
@@ -247,7 +246,6 @@ function getPageNumber (urlOriginal, page) {
 }
 
 function getComponents (page, isGenerated) {
-    console.log(999, page)
     if (isGenerated ) return structure.components.filter((e) => page.generated.components.includes(e.name))
     return structure.components.filter((e) => page.components.includes(e.name))
 }
@@ -258,7 +256,6 @@ export async function getData({urlOriginal, data, pagination}) {
     let result = null
 
     const page = getPage(urlOriginal)
-    console.log(888, page)
 
     const pageNumber = getPageNumber(urlOriginal, page)
     const generated = isGenerated(urlOriginal)

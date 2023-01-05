@@ -3,7 +3,8 @@ import {
   interpolateInvalid,
   interpolateProp,
   interpolateDataProp,
-  interpolateContext
+  interpolateContext,
+  interpolateClass
 } from './interpolation'
 
 export default function useComponent({
@@ -20,7 +21,62 @@ export default function useComponent({
   const component = computed(() => structure.components.find(e => e.name === name))
 
   const isInvalid = interpolateInvalid(component, pageNumber, hasNextPage)
-  
+
+  const classComputed = computed(() => {
+    let result = null
+
+    const props = JSON.parse(JSON.stringify(component.value?.props ?? {}))
+    if (!props.class) return result
+    const prop = props.class
+
+    result = {}
+
+    if (prop.type === 'context') {
+      result = interpolateContext({
+        component: component.value,
+        context,
+        contextData,
+        name,
+        url,
+        key: 'class',
+        data,
+        prop,
+        pageNumber
+      })
+    }
+
+    if (prop.type === 'data') {
+      console.error('ERROR, not implemented', prop.type, {prop})
+
+      // props[key] = interpolateDataProp({
+      //   name,
+      //   key,
+      //   data,
+      //   prop,
+      //   pageNumber
+      // })
+    }
+
+    if (prop.type === 'interpolate') {
+      result = interpolateProp({
+        name,
+        key: 'class',
+        data,
+        prop,
+        pageNumber,
+        url
+      })
+    }
+
+    if (props.class.type === 'class') {
+      result = interpolateClass({
+        prop: props.class, name
+      })
+    }
+
+    return result
+  })
+
   const props = computed(() => {
     
     const props = JSON.parse(JSON.stringify(component.value?.props ?? {}))
@@ -68,6 +124,10 @@ export default function useComponent({
               pageNumber
             })
           }
+
+          if (prop.type === 'class') {
+            delete props[key]
+          }
         }
       }
     }
@@ -76,6 +136,7 @@ export default function useComponent({
   })
 
   return {
+    classComputed,
     isInvalid,
     structure,
     component,

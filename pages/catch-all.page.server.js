@@ -40,7 +40,6 @@ async function onBeforeRender(pageContext) {
         structure, ...result
     })
 
-
     return {
         pageContext: {
             css,

@@ -61,6 +61,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import useStore from '../composables/stores'
 import RenderComponent from '../components/RenderComponent.vue'
 
 const props = defineProps([
@@ -75,6 +76,7 @@ const props = defineProps([
     'isGenerator',
     'components'
 ])
+
 const loaded = computed(() => {
     if (
         props.structure
@@ -84,5 +86,17 @@ const loaded = computed(() => {
     return false
 })
 
+const {set, store} = useStore()
+
+if (props.structure.stores) {
+    for (const key in props.structure.stores) {
+        if (Object.prototype.hasOwnProperty.call(props.structure.stores, key)) {
+            const storeCreated = props.structure.stores[key];
+            if (storeCreated.type === "composable") {
+                set(key, storeCreated.value);
+            }
+        }
+    }
+}
 
 </script>
